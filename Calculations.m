@@ -3,8 +3,8 @@ classdef Calculations
       SampleRate = 64; % Hz
       Gravity = 9.81; % already taken care of in majority of formulas for signage
       
-      MassArm = 0.04636; %(kg)
-      CGArm = 0.1310; % (m)% measured from rotation point
+      MassArm = 0.03990; %(kg)
+      CGArm = 0.1196; % (m)% measured from rotation point
       
       MassBall = 0.145; % (kg)
       CGBall = 0.20; % (m)% measured from rotation point
@@ -33,7 +33,7 @@ classdef Calculations
           
           %% inertia for output
           J_shaft_output = 15.64*0.0001*(1/1000);
-          J_arm = (289.3*0.0001*(1/1000)) + (m_arm*cg_arm^2); % kg*m^2
+          J_arm = (98.13*0.0001*(1/1000)) + (m_arm*cg_arm^2); % kg*m^2
           J_follower_gear = 818.95*0.0001*(1/1000);
           J_ball = ((2/5)*m_ball*r_ball^2) + (m_ball*d_ball^2);
           J_2 = J_arm + J_follower_gear + J_shaft_output + J_ball;
