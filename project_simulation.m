@@ -4,26 +4,26 @@ clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
-m_arm = calc.MassArm;
 cg_ball = calc.CGBall;
 r_ball = calc.RadiusBall;
 
 %% specify how much to swing the arm and rest position
 max_torque = -2.7;
-arm_swing_angle = -45-20; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 200; 
+arm_swing_angle = -45-30; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_start_angle = 190; 
 
 %% gear sizes radius % (cm)
 base_gear = 0.9525;
-follower_gear = 3.81;
-gear_ratio = 4;
+follower_gear = 4.81;
+gear_ratio = 5;
+center_distance = base_gear+follower_gear;
 
 %% start positions at ball launch from origin, used for simulink, script
-rotation_pivot_height = 4.5; %(cm)
+rotation_pivot_height = 5; %(cm)
 z_distance_arm = 6.5; %cm
 
-calc.X0 = cg_ball*cosd(arm_start_angle + arm_swing_angle) + (-follower_gear/100); % initial x position (of ball)(m)
-calc.Y0 = cg_ball*sind(arm_start_angle + arm_swing_angle) + ((rotation_pivot_height+1.05+r_ball)/100) ; % initial y position (of ball)(m)
+calc.X0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
+calc.Y0 = cg_ball*sind(arm_start_angle + arm_swing_angle) + ((rotation_pivot_height+1.05+r_ball+center_distance)/100) ; % initial y position (of ball)(m)
 
 %% calculate required launch velocity from torque and starting and swing angle
 v_x_y_launch = calc.launch_x_y_velocity(max_torque, arm_swing_angle, arm_start_angle, gear_ratio);
@@ -43,6 +43,7 @@ sim("simscape_main.slx", 2.5)
 d_vectors = calc.x_y_d_vectors(vx_launch, vy_launch, t_landing);
 x_vector = d_vectors(:, 1);
 y_vector = d_vectors(:, 2);
+y_max = max(y_vector);
 
 %% obtain simscape data
 % Need to offset x and y data as they start at zero due to a different
