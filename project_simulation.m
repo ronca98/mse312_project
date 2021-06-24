@@ -10,7 +10,7 @@ r_ball = calc.RadiusBall;
 %% specify how much to swing the arm and rest position
 max_torque = -2.7;
 arm_swing_angle = -45-30; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 190; 
+arm_start_angle = 200; 
 
 %% gear sizes radius % (cm)
 base_gear = 0.9525;
