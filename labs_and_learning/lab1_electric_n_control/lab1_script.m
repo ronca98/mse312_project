@@ -3,7 +3,7 @@ close all
 clc
 
 %% input voltage, PWM and H-Bridge
-command_voltage = 27.5; % V
+command_voltage = 47.5; % V
 pwm_freq = 4000; % Hz
 Vm_min = 10;
 Vm_max = 45;
