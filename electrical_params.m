@@ -3,22 +3,21 @@ close all
 clc
 
 %% input voltage, PWM and H-Bridge
-command_voltage = 45; % V
+command_voltage = 8.875; % V % 37.5% duty cycle for 60V output
 pwm_freq = 4000; % Hz
-Vm_min = 10; %V
-Vm_max = 45; %V
-max_voltage_input_hbridge = 5; %V
+Vm_min = 7; %V
+Vm_max = 12; %V
+max_output_voltage = 160; %V
 voltage_reverse = 1; %V
+output_on_resistance = 0.05; % ohms
 if command_voltage < 0
-    voltage_reverse = 2.6;
+    voltage_reverse = 1.5;
     command_voltage = abs(command_voltage);
 end
-output_on_resistance = 0.55; % ohms
 
 %% DC motor
 % Electrical 
 % Option 1: model param: by stall torque and no load speed
-rated_dc_supply_voltage = 60; %V
 armature_inductance = 0.0079; % H
 no_load_speed = 1400; % rpm
 stall_torque = 12; % N*m
