@@ -3,43 +3,69 @@ close all
 clc
 
 %% input voltage, PWM and H-Bridge
-command_voltage = 8.875; % V % 37.5% duty cycle for 60V output
+desired_duty_cycle = 1; 
 pwm_freq = 4000; % Hz
 Vm_min = 7; %V
-Vm_max = 12; %V
-max_output_voltage = 160; %V
+Vm_max = 58; %V
+command_voltage = Vm_min + (Vm_max-Vm_min)*desired_duty_cycle; % V
 voltage_reverse = 1; %V
-output_on_resistance = 0.05; % ohms
 if command_voltage < 0
-    voltage_reverse = 1.5;
+    voltage_reverse = 2.6;
     command_voltage = abs(command_voltage);
 end
+output_on_resistance = 0.55; % ohms
 
 %% DC motor
 % Electrical 
 % Option 1: model param: by stall torque and no load speed
-armature_inductance = 0.0079; % H
-no_load_speed = 1400; % rpm
-stall_torque = 12; % N*m
+rated_dc_supply_voltage = 45; %V
+armature_inductance = 0; % H
+no_load_speed = 5800; % rpm
+stall_torque = 13.13; % N*m
 
 % Mechanical 
-rotor_inertia = 0.0057; % kg*m^2
+rotor_inertia = 2.31e-04; % kg*m^2
 rotor_damping = 0; % N*m/s(rad/s)
-gear_ratio = 1;
+gear_ratio = 5;
 
 %% run simulation
-model = sim("electrical_model.slx", 1);
+model = sim("electrical_model.slx", 0.1);
 time_vector = model.speed_rpm.Time;
+
+current_vector = model.current.Data;
+power_vector = model.power.Data;
+voltage_vector = model.voltage.Data;
+
 position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
 
-data_array = cat(2, time_vector, position_vector, speed_vector);
-data_array = data_array(data_array(:, 2) > 70, :);
-launch_angle = data_array(1, 2);
-launch_speed = data_array(1, 3);
+%% Calculations at swing angle
+swing_angle = 75;
+data_array = cat(2, ...
+                 power_vector, current_vector, voltage_vector, ...
+                 time_vector, position_vector, speed_vector);
 
-text = ["Launch angle: ", launch_angle, "launch_speed: ", launch_speed];
-disp(text)
+peak_current = data_array(1, 2);
+
+            
+data_array = data_array(data_array(:, 5) > swing_angle, :);
+
+launch_power = data_array(1, 1);
+launch_voltage = data_array(1, 3);
+
+launch_time = data_array(1, 4);
+launch_angle = data_array(1, 5);
+launch_speed = data_array(1, 6);
+
+electrical_info = ["Peak Current: ", peak_current, ... 
+                   "Power: ", launch_power, ...
+                   "Voltage: ", launch_voltage];
+disp(electrical_info)
+               
+mechanical_info = ["Launch time:", launch_time, ...
+                   "Launch angle: ", launch_angle, ...
+                   "Launch_speed: ", launch_speed];          
+disp(mechanical_info)
 
 
 
