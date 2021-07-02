@@ -29,7 +29,7 @@ rotor_damping = 0; % N*m/s(rad/s)
 gear_ratio = 5;
 
 %% run simulation
-model = sim("electrical_model.slx", 0.1);
+model = sim("electrical_model.slx", 1);
 time_vector = model.speed_rpm.Time;
 
 current_vector = model.current.Data;
@@ -38,24 +38,28 @@ voltage_vector = model.voltage.Data;
 
 position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
+driving_torque_vector = model.driving_torque.Data;
 
 %% Calculations at swing angle
 swing_angle = 75;
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
-                 time_vector, position_vector, speed_vector);
+                 time_vector, position_vector, speed_vector, driving_torque_vector);
 
 peak_current = data_array(1, 2);
+peak_driving_torque = max(data_array(:, 7));
 
-            
-data_array = data_array(data_array(:, 5) > swing_angle, :);
+data_array = data_array(data_array(:, 5) < swing_angle, :);
 
-launch_power = data_array(1, 1);
-launch_voltage = data_array(1, 3);
 
-launch_time = data_array(1, 4);
-launch_angle = data_array(1, 5);
-launch_speed = data_array(1, 6);
+launch_power = data_array(end, 1);
+launch_voltage = data_array(end, 3);
+
+launch_time = data_array(end, 4);
+launch_angle = data_array(end, 5);
+launch_speed = data_array(end, 6);
+launch_driving_torque = data_array(end, 7);
+mean_driving_torque = mean(data_array(:, 7));
 
 electrical_info = ["Peak Current: ", peak_current, ... 
                    "Power: ", launch_power, ...
@@ -66,6 +70,11 @@ mechanical_info = ["Launch time:", launch_time, ...
                    "Launch angle: ", launch_angle, ...
                    "Launch_speed: ", launch_speed];          
 disp(mechanical_info)
+
+torque_info = ["Peak Driving Torque", peak_driving_torque, ...
+               "Launch Driving Torque",  launch_driving_torque, ...
+               "Mean Driving Torque", mean_driving_torque];
+disp(torque_info)
 
 
 
