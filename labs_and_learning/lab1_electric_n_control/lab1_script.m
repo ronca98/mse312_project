@@ -17,13 +17,12 @@ output_on_resistance = 0.55; % ohms
 
 %% DC motor
 % Electrical 
-% Option 1: model param: by rated load and speed
 rated_dc_supply_voltage = 12; %V
 armature_resistance = 4.33; % ohms
 armature_inductance = 0.00234; % H
 back_emf_constant = 2.18e-02;
 no_load_speed = 720; % rpm
-stall_torque = 3.0e-01;
+stall_torque = 3.0e-01; % N*m
 rated_speed = 650; % rpm
 rated_load_power = 3.5; %W
 

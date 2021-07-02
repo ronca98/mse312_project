@@ -1,6 +1,9 @@
-clear all 
 close all
 clc
+check = exist("J_total",  "var");
+if check == 0
+    clear all 
+end
 
 %% input voltage, PWM and H-Bridge
 desired_duty_cycle = 1; 
@@ -40,7 +43,7 @@ position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
 driving_torque_vector = model.driving_torque.Data;
 
-%% Calculations at swing angle
+%% calculations for tables
 swing_angle = 75;
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
@@ -61,6 +64,8 @@ launch_speed = data_array(end, 6);
 launch_driving_torque = data_array(end, 7);
 mean_driving_torque = mean(data_array(:, 7));
 
+%% display information for user
+disp("electrical_params.m:")
 electrical_info = ["Peak Current: ", peak_current, ... 
                    "Power: ", launch_power, ...
                    "Voltage: ", launch_voltage];
