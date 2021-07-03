@@ -32,7 +32,7 @@ J_total =  J_1 + (J_2/(gear_ratio)^2);
 electrical_params;
 
 %% specify how much to swing the arm and rest position
-input_torque = -2.834;
+input_torque = mean_driving_torque;
 arm_swing_angle = -45-30; %degrees (rotating clockwise, maximum start at 180 degrees) 
 arm_start_angle = 180; 
 

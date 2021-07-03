@@ -1,7 +1,7 @@
 close all
 clc
-check = exist("J_total",  "var");
-if check == 0
+check = exist("mean_driving_torque",  "var");
+if check == 1
     clear all 
 end
 
