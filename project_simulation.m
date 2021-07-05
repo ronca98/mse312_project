@@ -9,20 +9,20 @@ cg_ball = 0.17; % (m)% measured from rotation point
 r_ball = 0.0315; % (m)
 
 %% gear sizes radius % (cm)
-base_gear = 0.9525;
-follower_gear = 4.81;
-gear_ratio = 5;
+base_gear = 0.8331;
+follower_gear = 3.849;
+gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% Inertia calculations
-J_shaft = 13.91*0.0001*(1/1000);
+J_shaft = 4.05*0.0001*(1/1000);
 % inertia for input
-J_base_gear = 10.05*0.0001*(1/1000);
+J_base_gear = 0.46*0.0001*(1/1000);
 J_1 = J_shaft + J_base_gear;
+
 % inertia for output
-J_shaft = 15.64*0.0001*(1/1000);
 J_arm = (14532.12*0.0001*(1/1000)); % kg*m^2
-J_follower_gear = 1617.27*0.0001*(1/1000);
+J_follower_gear = 325.50*0.0001*(1/1000);
 J_ball = ((2/5)*m_ball*r_ball^2) + (m_ball*cg_ball^2);
 J_2 = J_arm + J_follower_gear + J_shaft + J_ball;
 % Total inertia experienced at the input
@@ -32,9 +32,9 @@ J_total =  J_1 + (J_2/(gear_ratio)^2);
 electrical_params;
 
 %% specify how much to swing the arm and rest position
-input_torque = mean_driving_torque;
-arm_swing_angle = -45-30; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 180; 
+input_torque = mean_driving_torque*0.86;
+arm_swing_angle = -75; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 5; %(cm)

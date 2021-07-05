@@ -27,9 +27,9 @@ no_load_speed = 5800; % rpm
 stall_torque = 13.13; % N*m
 
 % Mechanical 
-rotor_inertia = 2.31e-04; % kg*m^2
+rotor_inertia = 2.4933e-04; % kg*m^2
 rotor_damping = 0; % N*m/s(rad/s)
-gear_ratio = 5;
+gear_ratio = 4.8;
 
 %% run simulation
 model = sim("electrical_model.slx", 1);
