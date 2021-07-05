@@ -17,11 +17,12 @@ center_distance = base_gear+follower_gear;
 %% Inertia calculations
 J_shaft = 4.05*0.0001*(1/1000);
 % inertia for input
-J_base_gear = 10.05*0.0001*(1/1000);
+J_base_gear = 0.46*0.0001*(1/1000);
 J_1 = J_shaft + J_base_gear;
+
 % inertia for output
 J_arm = (14532.12*0.0001*(1/1000)); % kg*m^2
-J_follower_gear = 1617.27*0.0001*(1/1000);
+J_follower_gear = 325.50*0.0001*(1/1000);
 J_ball = ((2/5)*m_ball*r_ball^2) + (m_ball*cg_ball^2);
 J_2 = J_arm + J_follower_gear + J_shaft + J_ball;
 % Total inertia experienced at the input
@@ -31,9 +32,9 @@ J_total =  J_1 + (J_2/(gear_ratio)^2);
 electrical_params;
 
 %% specify how much to swing the arm and rest position
-input_torque = mean_driving_torque;
-arm_swing_angle = -45-30; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 180; 
+input_torque = mean_driving_torque*0.86;
+arm_swing_angle = -75; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 5; %(cm)
@@ -72,15 +73,12 @@ y_max = max(y_vector);
 %% obtain simscape data
 % Need to offset x and y data as they start at zero due to a different
 % joint keeping track of motion and thus another reference frame.
+t_data = position_x.Time;
 x_data = position_x.Data + x0;
 y_data = position_y.Data + y0;
-y_data = y_data(y_data>0);
-x_data = x_data(1:length(y_data));
-x_data_landing = x_data(end);
-y_data_max = max(y_data);
-t_data = position_x.Time;
-t_data = t_data(1:length(y_data));
-t_data_landing = t_data(end);
+impact_force_data = impact_force.Data;
+
+ball_data = cat(2, t_data, x_data, y_data, impact_force_data);
 
 %% plot calculation vs simulation
 plot(x_vector, y_vector, 'o')

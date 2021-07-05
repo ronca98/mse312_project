@@ -32,17 +32,20 @@ J_total =  J_1 + (J_2/(gear_ratio)^2);
 electrical_params;
 
 %% specify how much to swing the arm and rest position
-input_torque = mean_driving_torque*0.86;
+input_torque = mean_driving_torque*0.80;
 arm_swing_angle = -75; %degrees (rotating clockwise, maximum start at 180 degrees) 
 arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
-rotation_pivot_height = 5; %(cm)
+rotation_pivot_height = 4.09; %(cm)
 z_distance_arm = 6.5; %cm
 
 x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
+x0_rest = cg_ball*cosd(arm_start_angle);
 y0 = cg_ball*sind(arm_start_angle + arm_swing_angle) ... 
           + ((rotation_pivot_height+1.05+r_ball+center_distance)/100) ; % initial y position (of ball)(m)
+y0_rest = cg_ball*sind(arm_start_angle) ... 
+          + ((rotation_pivot_height+1.05+r_ball+center_distance)/100);
 
 %% calculate required launch velocity from torque and starting and swing angle
 v_x_y_launch = calc.launch_x_y_velocity(input_torque, ...
@@ -70,24 +73,42 @@ x_vector = d_vectors(:, 1);
 y_vector = d_vectors(:, 2);
 y_max = max(y_vector);
 
-%% obtain simscape data
+%% obtain simscape data and perform calculations
 % Need to offset x and y data as they start at zero due to a different
 % joint keeping track of motion and thus another reference frame.
-x_data = position_x.Data + x0;
-y_data = position_y.Data + y0;
-y_data = y_data(y_data>0);
-x_data = x_data(1:length(y_data));
-x_data_landing = x_data(end);
-y_data_max = max(y_data);
 t_data = position_x.Time;
-t_data = t_data(1:length(y_data));
-t_data_landing = t_data(end);
+x_data = position_x.Data+x0_rest;
+y_data = position_y.Data+y0_rest;
+impact_force_data = impact_force.Data;
+
+ball_data = cat(2, t_data, x_data, impact_force_data);
+ball_data = ball_data(ball_data(:, 3) > 1000, :);
+
+t_data_land = ball_data(1,1);
+x_data_land = ball_data(1,2);
+y_data_max = max(y_data);
+
+%% display information for user
+disp("project_simulation.m:")
+calc_info = ["t_land (s): ", t_landing, ...
+             "x_land (m): ", x_landing, ...
+             "y_max (m): ", y_max];
+disp(calc_info)
+ball_info = ["t_data_land (s): ", t_data_land, ...
+             "x_data_land (m): ", x_data_land, ...
+             "y_data_max (m): ", y_data_max];
+disp(ball_info)
 
 %% plot calculation vs simulation
 plot(x_vector, y_vector, 'o')
 hold on 
 plot(x_data, y_data)
+ylabel("position y (m)")
+yyaxis right
+plot(x_data, impact_force_data)
 hold off
+xlabel("position x (m)")
+
 
 
 
