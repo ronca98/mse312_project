@@ -22,9 +22,9 @@ output_on_resistance = 0.55; % ohms
 % Electrical 
 % Option 1: model param: by stall torque and no load speed
 rated_dc_supply_voltage = 45; %V
-armature_inductance = 0; % H
-no_load_speed = 5800; % rpm
-stall_torque = 13.13; % N*m
+armature_inductance = 1e-4; % H
+no_load_speed = 5300; % rpm
+stall_torque = 1.3; % N*m
 
 % Mechanical 
 rotor_inertia = 2.4933e-04; % kg*m^2
@@ -44,7 +44,7 @@ speed_vector = model.speed_rpm.Data;
 driving_torque_vector = model.driving_torque.Data;
 
 %% calculations for tables
-swing_angle = 75;
+swing_angle = 45;
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
                  time_vector, position_vector, speed_vector, driving_torque_vector);

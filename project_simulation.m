@@ -33,8 +33,8 @@ electrical_params;
 
 %% specify how much to swing the arm and rest position
 input_torque = mean_driving_torque*0.80;
-arm_swing_angle = -75; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 200; 
+arm_swing_angle = -45; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_start_angle = 160; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 4.09; %(cm)
