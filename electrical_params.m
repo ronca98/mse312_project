@@ -8,24 +8,24 @@ end
 %% input voltage, PWM and H-Bridge
 desired_duty_cycle = 1; 
 pwm_freq = 4000; % Hz
-Vm_min = 7; %V
-Vm_max = 58; %V
+Vm_min = 10; %V
+Vm_max = 45; %V
 command_voltage = (Vm_min + (Vm_max-Vm_min))*desired_duty_cycle; % V
 output_on_resistance = 0.55; % ohms
 
 %% DC motor
 % Electrical 
 % Option 1: model param: by stall torque and no load speed
-rated_dc_supply_voltage = 45; %V
-armature_inductance = 1e-4; % H
-no_load_speed = 5300; % rpm
-stall_torque = 1.3; % N*m
+rated_dc_supply_voltage = 12; %V
+armature_inductance = 0.00234; % H
+no_load_speed = 720; % rpm
+stall_torque = 0.3; % N*m
 
 % Mechanical 
-rotor_inertia = 2.4933e-04; % kg*m^2
-rotor_damping = 0; % N*m/s(rad/s)
+rotor_inertia = 1.6e-06 + 2.4933e-04; % kg*m^2
+rotor_damping = 1.4e-06; % N*m/s(rad/s)
+% gear ratio for external gears 
 gear_ratio = 4.8;
-
 %% run simulation
 model = sim("electrical_model.slx", 1);
 time_vector = model.speed_rpm.Time;
@@ -39,7 +39,7 @@ speed_vector = model.speed_rpm.Data;
 driving_torque_vector = model.driving_torque.Data;
 
 %% calculations for tables
-swing_angle = 45;
+swing_angle = 75;
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
                  time_vector, position_vector, speed_vector, driving_torque_vector);
@@ -79,11 +79,11 @@ mechanical_info = ["Launch time:", launch_time, ...
                    "Launch_speed: ", launch_speed];          
 disp(mechanical_info)
 
-torque_info = ["Peak Driving Torque", peak_driving_torque, ...
-               "Launch Driving Torque",  launch_driving_torque, ...
-               rotation_direction_text, ...
-               "Mean Driving Torque", mean_driving_torque];
-disp(torque_info)
+% torque_info = ["Peak Driving Torque", peak_driving_torque, ...
+%                "Launch Driving Torque",  launch_driving_torque, ...
+%                rotation_direction_text, ...
+%                "Mean Driving Torque", mean_driving_torque];
+% disp(torque_info)
 
 
 
