@@ -10,12 +10,7 @@ desired_duty_cycle = 1;
 pwm_freq = 4000; % Hz
 Vm_min = 7; %V
 Vm_max = 58; %V
-command_voltage = Vm_min + (Vm_max-Vm_min)*desired_duty_cycle; % V
-voltage_reverse = 1; %V
-if command_voltage < 0
-    voltage_reverse = 2.6;
-    command_voltage = abs(command_voltage);
-end
+command_voltage = (Vm_min + (Vm_max-Vm_min))*desired_duty_cycle; % V
 output_on_resistance = 0.55; % ohms
 
 %% DC motor
@@ -48,12 +43,15 @@ swing_angle = 45;
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
                  time_vector, position_vector, speed_vector, driving_torque_vector);
+filtered_current_vector = data_array(:, 2);
+[~, idx] = max(abs(filtered_current_vector));
+peak_current = filtered_current_vector(idx);
 
-peak_current = data_array(1, 2);
-peak_driving_torque = max(data_array(:, 7));
+filtered_driving_torque_vector = data_array(:, 7);
+[~, idx] = max(abs(filtered_driving_torque_vector));
+peak_driving_torque = filtered_driving_torque_vector(idx);
 
 data_array = data_array(data_array(:, 5) < swing_angle, :);
-
 
 launch_power = data_array(end, 1);
 launch_voltage = data_array(end, 3);
@@ -70,6 +68,11 @@ electrical_info = ["Peak Current: ", peak_current, ...
                    "Power: ", launch_power, ...
                    "Voltage: ", launch_voltage];
 disp(electrical_info)
+
+rotation_direction_text = "CCW";
+if command_voltage < 0
+    rotation_direction_text = "CW";
+end
                
 mechanical_info = ["Launch time:", launch_time, ...
                    "Launch angle: ", launch_angle, ...
@@ -78,6 +81,7 @@ disp(mechanical_info)
 
 torque_info = ["Peak Driving Torque", peak_driving_torque, ...
                "Launch Driving Torque",  launch_driving_torque, ...
+               rotation_direction_text, ...
                "Mean Driving Torque", mean_driving_torque];
 disp(torque_info)
 
