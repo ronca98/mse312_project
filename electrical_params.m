@@ -8,8 +8,8 @@ end
 %% input voltage, PWM and H-Bridge
 desired_duty_cycle = 1; 
 pwm_freq = 4000; % Hz
-Vm_min = 10; %V
-Vm_max = 45; %V
+Vm_min = 0; %V
+Vm_max = 12; %V
 command_voltage = (Vm_min + (Vm_max-Vm_min))*desired_duty_cycle; % V
 output_on_resistance = 0.55; % ohms
 
@@ -23,19 +23,19 @@ no_load_speed = 720; % rpm
 stall_torque = 0.3; % N*m
 
 % Mechanical 
-rotor_inertia = 1.6e-06 + 2.4933e-04; % kg*m^2
+rotor_inertia = 6.3^2*1.6e-06 + 2.4933e-04; % kg*m^2
 rotor_damping = 1.4e-06; % N*m/s(rad/s)
 % gear ratio for external gears 
 gear_ratio = 4.8;
 
 %% PI Controller Design for Current
-a = 6;
+a = 1;
 sample_bw_rad = 2*pi*64;
 k_p = sample_bw_rad*a*L_m;
-k_i = sample_bw_rad*R_m;
+k_i = sample_bw_rad*R_m*a;
 
 % reference or desired current
-i_ref = -0.03; % A
+i_ref = 0.6; % A
 
 %% run simulation
 model = sim("electrical_model.slx", 10);
