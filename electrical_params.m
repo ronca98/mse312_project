@@ -17,7 +17,8 @@ output_on_resistance = 0.55; % ohms
 % Electrical 
 % Option 1: model param: by stall torque and no load speed
 rated_dc_supply_voltage = 12; %V
-armature_inductance = 0.00234; % H
+R_m = 4.33; % equivalent motor resistance, Ohm
+L_m = 0.00234; % armature inductance H
 no_load_speed = 720; % rpm
 stall_torque = 0.3; % N*m
 
@@ -26,8 +27,20 @@ rotor_inertia = 1.6e-06 + 2.4933e-04; % kg*m^2
 rotor_damping = 1.4e-06; % N*m/s(rad/s)
 % gear ratio for external gears 
 gear_ratio = 4.8;
+
+%% PI Controller Design for Current
+a = 6;
+sample_bw_rad = 2*pi*64;
+k_p = sample_bw_rad*a*L_m;
+k_i = sample_bw_rad*R_m;
+
+% reference or desired current
+i_ref = -0.03; % A
+
 %% run simulation
-model = sim("electrical_model.slx", 1);
+model = sim("electrical_model.slx", 10);
+
+%% Load data from Simulink
 time_vector = model.speed_rpm.Time;
 
 current_vector = model.current.Data;
@@ -38,11 +51,19 @@ position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
 driving_torque_vector = model.driving_torque.Data;
 
-%% calculations for tables
-swing_angle = 75;
+%% Plot Data
+
+figure;
+subplot(2, 2, 1); plot(time_vector, power_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 2); plot(time_vector, current_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 3); plot(time_vector, voltage_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 4); plot(time_vector, speed_vector, 'LineWidth', 2); grid on;
+
+%% Obtain calculations from Data
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
-                 time_vector, position_vector, speed_vector, driving_torque_vector);
+                 time_vector, position_vector, speed_vector, driving_torque_vector);            
+swing_angle = 45;
 filtered_current_vector = data_array(:, 2);
 [~, idx] = max(abs(filtered_current_vector));
 peak_current = filtered_current_vector(idx);
