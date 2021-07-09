@@ -21,24 +21,33 @@ R_m = 4.33; % equivalent motor resistance, Ohm
 L_m = 0.00234; % armature inductance H
 no_load_speed = 720; % rpm
 stall_torque = 0.3; % N*m
+torque_const = 2.18e-02; % N*m/A
 
 % Mechanical 
-rotor_inertia = 6.3^2*1.6e-06 + 2.4933e-04; % kg*m^2
+system_inertia = 2.4933e-04; % kg*m^2
+rotor_inertia = 6.3^2*1.6e-06;  %+ system_inertia; % kg*m^2
 rotor_damping = 1.4e-06; % N*m/s(rad/s)
 % gear ratio for external gears 
-gear_ratio = 4.8;
-
+gear_ratio_int = 6.3;
+gear_ratio_ext = 1;
+train_ratio = gear_ratio_int*gear_ratio_ext;
+ 
 %% PI Controller Design for Current
 a = 1;
 sample_bw_rad = 2*pi*64;
 k_p = sample_bw_rad*a*L_m;
 k_i = sample_bw_rad*R_m*a;
 
-% reference or desired current
-i_ref = 0.6; % A
+k_p_w = ((sample_bw_rad*rotor_inertia)/10);
+k_i_w = ((sample_bw_rad*rotor_damping)/10);
+
+% reference signal
+% i_ref = 0.6; % A
+w_ref = 65; % omega
+% pos_d = 45;
 
 %% run simulation
-model = sim("electrical_model.slx", 10);
+model = sim("electrical_model.slx", 3);
 
 %% Load data from Simulink
 time_vector = model.speed_rpm.Time;
@@ -63,7 +72,7 @@ subplot(2, 2, 4); plot(time_vector, speed_vector, 'LineWidth', 2); grid on;
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
                  time_vector, position_vector, speed_vector, driving_torque_vector);            
-swing_angle = 45;
+swing_angle = 75;
 filtered_current_vector = data_array(:, 2);
 [~, idx] = max(abs(filtered_current_vector));
 peak_current = filtered_current_vector(idx);
