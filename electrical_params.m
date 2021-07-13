@@ -37,21 +37,41 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*12;
-k_i = (sample_bw_rad*R_m/10)*0.1;
+k_p = (sample_bw_rad*L_m/10);
+k_i = (sample_bw_rad*R_m/10);
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*15;
-k_i_w = ((sample_bw_rad*rotor_damping)/100)*0.1;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*25;
+k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 10;
+k_p_p = 35;
 
 % reference signal
 % i_ref = 0.6; % A
 w_ref = 65; % omega
-pos_d = 45;
+pos_d = 45; % degrees
+
+%% generate input signal
+t_final = 1.2;
+period = (1/sample_freq)*0.1;
+% parabolic
+time_phase_one = 0:period:0.02;
+y_phase_one =  45000*time_phase_one.^2;
+% ramp
+time_phase_two = (0.02+period):period:0.05;
+y_phase_two = ((pos_d-y_phase_one(end))/(0.03-period))*time_phase_two;
+% quintic
+time_pts_phase_three = [(0.05+period), 0.2, 0.4, 0.6, 0.8, 1, t_final];
+y_pts_phase_three = [pos_d, 30, 15, 10, 4, 2, 0];
+time_phase_three = (0.05+period):period:t_final;
+quintic_polynomial = polyfit(time_pts_phase_three, y_pts_phase_three, 5);
+y_phase_three = polyval(quintic_polynomial, time_phase_three);
+% combine into array
+input_time = cat(1, time_phase_one', time_phase_two', time_phase_three');
+input_y = cat(1, y_phase_one', y_phase_two', y_phase_three');
+pos_ref = [input_time, input_y];
 
 %% run simulation
-model = sim("electrical_model.slx", 10);
+model = sim("electrical_model.slx", t_final);
 
 %% Load data from Simulink
 time_vector = model.speed_rpm.Time;
