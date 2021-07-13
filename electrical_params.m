@@ -40,18 +40,20 @@ sample_bw_rad = 2*pi*sample_freq;
 k_p = (sample_bw_rad*L_m/10);
 k_i = (sample_bw_rad*R_m/10);
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*25;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*20;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 35;
+k_p_p = 45;
+k_i_p = 1;
+k_d_p = 0.01;
 
 % reference signal
 % i_ref = 0.6; % A
-w_ref = 65; % omega
+w_ref = 720; % omega
 pos_d = 45; % degrees
 
 %% generate input signal
-t_final = 1.2;
+t_final = 0.1;
 period = (1/sample_freq)*0.1;
 % parabolic
 time_phase_one = 0:period:0.02;
@@ -80,7 +82,7 @@ current_vector = model.current.Data;
 power_vector = model.power.Data;
 voltage_vector = model.voltage.Data;
 
-position_ref_vector = model.position_deg_ref.Data;
+%position_ref_vector = model.position_deg_ref.Data;
 position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
 driving_torque_vector = model.driving_torque.Data;
@@ -98,19 +100,19 @@ subplot(2, 2, 4); plot(time_vector, speed_vector, 'LineWidth', 2); grid on;
 title("Speed (RPM)")
 
 % Reference vs Actual Position
-figure
-plot(time_vector, position_ref_vector);
-hold on
-plot(time_vector, position_vector);
-hold off
-legend("position reference", "position actual");
-ylabel("\theta ")
-xlabel("time (s)")
+% figure
+% plot(time_vector, position_ref_vector);
+% hold on
+% plot(time_vector, position_vector);
+% hold off
+% legend("position reference", "position actual");
+% ylabel("\theta ")
+% xlabel("time (s)")
 
 % Plot Errors
 figure;
-subplot(2, 2, 1); plot(time_vector, model.error_position.Data, 'LineWidth', 2); grid on;
-title("Position Error")
+% subplot(2, 2, 1); plot(time_vector, model.error_position.Data, 'LineWidth', 2); grid on;
+% title("Position Error")
 subplot(2, 2, 2); plot(time_vector, model.error_speed.Data, 'LineWidth', 2); grid on;
 title("Speed Error")
 subplot(2, 2, 3); plot(time_vector, model.error_current.Data, 'LineWidth', 2); grid on;
