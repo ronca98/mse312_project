@@ -54,14 +54,21 @@ t_final = 1.5;
 period = (1/sample_freq)*0.01;
 
 %% generate input signal for speed
+% phase one
 time_phase_one = 0:period:speed_ramp_t;
 y_phase_one = (w_d/speed_ramp_t)*(time_phase_one);
+% phase two
 time_phase_two = (speed_ramp_t+period):period:t_final;
 y_phase_two = y_phase_one(end)*ones(1, length(time_phase_two));
+% create reference speed signal
 input_time = cat(1, time_phase_one', time_phase_two');
 input_y = cat(1, y_phase_one', y_phase_two');
-
+input_y_integral = cumtrapz(input_time, input_y*0.10472);
 w_ref = [input_time, input_y];
+% determine the time when phase 2 ends 
+position_array = cat(2, input_time, input_y_integral);
+position_array_filtered = position_array(position_array(:, 2) < pos_d*(pi/180), :);
+t_ref_launch = position_array_filtered(end, 1);
 
 %% generate input signal for position
 time_pts_phase_three = [(0.05+period), 0.2, 0.4, 0.6, 0.8, 1, t_final];
