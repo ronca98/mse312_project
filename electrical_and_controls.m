@@ -47,7 +47,7 @@ k_p_p = 30;
 k_i_p = 4.5;
 k_d_p = 0.1;
 % reference signal
-pos_d = 55; % degrees
+pos_d = 45; % degrees
 speed_ramp_t = 0.1;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
 t_final = 2.5;
