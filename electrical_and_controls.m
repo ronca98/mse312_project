@@ -86,7 +86,7 @@ phase_three = cat(2, time_phase_three', y_phase_three');
 pos_ref = cat(1, phase_one_and_two, phase_three);
 
 %% run simulation
-model = sim("electrical_model.slx", t_final);
+model = sim("simscape_EandC.slx", t_final);
 
 %% Load data from Simulink
 time_vector = model.speed_rpm.Time;
