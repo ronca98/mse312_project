@@ -44,7 +44,7 @@ k_p_w = ((sample_bw_rad*rotor_inertia)/100)*130;
 k_i_w = ((sample_bw_rad*rotor_damping)/100)*4;
 % Position
 k_p_p = 30;
-k_i_p = 4.5;
+k_i_p = 1;
 k_d_p = 0.1;
 % reference signal
 pos_d = 45; % degrees
@@ -104,13 +104,13 @@ driving_torque_vector = model.driving_torque.Data;
 %% Plot Data
 % Various Electrical Plots
 figure;
-subplot(2, 2, 1); plot(time_vector, power_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 1); plot(time_vector, power_vector); grid on;
 title("Power (W)")
-subplot(2, 2, 2); plot(time_vector, current_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 2); plot(time_vector, current_vector); grid on;
 title("Current (A)")
-subplot(2, 2, 3); plot(time_vector, voltage_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 3); plot(time_vector, voltage_vector); grid on;
 title("Voltage (V)")
-subplot(2, 2, 4); plot(time_vector, speed_vector, 'LineWidth', 2); grid on;
+subplot(2, 2, 4); plot(time_vector, speed_vector); grid on;
 title("Speed (RPM)")
 
 % Reference vs Actual Speed
@@ -119,7 +119,9 @@ plot(time_vector, speed_ref_vector);
 hold on
 plot(time_vector, speed_vector);
 hold off
+grid on
 legend("speed reference", "speed actual");
+
 title("\omega (RPM)")
 xlabel("time (s)")
 
@@ -129,17 +131,18 @@ plot(time_vector, position_ref_vector);
 hold on
 plot(time_vector, position_vector);
 hold off
+grid on
 legend("position reference", "position actual")
 title("\theta (degrees)")
 xlabel("time (s)")
 
 % Plot Errors
 figure;
-subplot(2, 2, 1); plot(time_vector, model.error_position.Data, 'LineWidth', 2); grid on;
+subplot(2, 2, 1); plot(time_vector, model.error_position.Data); grid on;
 title("Position Error")
-subplot(2, 2, 2); plot(time_vector, model.error_speed.Data, 'LineWidth', 2); grid on;
+subplot(2, 2, 2); plot(time_vector, model.error_speed.Data); grid on;
 title("Speed Error")
-subplot(2, 2, 3); plot(time_vector, model.error_current.Data, 'LineWidth', 2); grid on;
+subplot(2, 2, 3); plot(time_vector, model.error_current.Data); grid on;
 title("Current Error")
 
 %% Obtain calculations from Data
