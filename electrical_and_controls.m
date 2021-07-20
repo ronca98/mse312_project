@@ -1,6 +1,6 @@
 close all
 clc
-check = exist("mean_driving_torque",  "var");
+check = exist("time_vector",  "var");
 if check == 1
     clear all 
 end

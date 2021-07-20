@@ -28,9 +28,6 @@ J_2 = J_arm + J_follower_gear + J_shaft + J_ball;
 % Total inertia experienced at the input
 J_total =  J_1 + (J_2/(gear_ratio)^2); 
 
-%% Load in parameters from electrical component
-electrical_and_controls;
-
 %% specify how much to swing the arm and rest position
 input_torque = 0.3;
 arm_swing_angle = -45; %degrees (rotating clockwise, maximum start at 180 degrees) 
