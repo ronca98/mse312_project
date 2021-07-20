@@ -39,14 +39,14 @@ sample_bw_rad = 2*pi*sample_freq;
 k_p = (sample_bw_rad*L_m/10)*0.1;
 k_i = (sample_bw_rad*R_m/10)*4;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*900;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*11;
 k_i_w = ((sample_bw_rad*rotor_damping)/100)*1;
 % Position
-k_p_p = 42;
+k_p_p = 45;
 k_i_p = 1;
 k_d_p = 0.01;
 % reference signal
-pos_d = -arm_swing_angle; % degrees
+pos_d = 55; % degrees
 speed_ramp_t = 0.11;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
 t_final = 1.5;
