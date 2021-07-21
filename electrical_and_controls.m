@@ -47,7 +47,7 @@ k_i_p = 1;
 k_d_p = 0.001;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
-speed_ramp_t = 0.08;
+speed_ramp_t = 0.05;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
 t_final = 4.5;
 period = (1/sample_freq)*0.01;
