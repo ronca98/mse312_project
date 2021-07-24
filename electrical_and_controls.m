@@ -11,7 +11,7 @@ pwm_freq = 4000; % Hz
 Vm_min = 0; %V
 Vm_max = 36; %V
 command_voltage = (Vm_min + (Vm_max-Vm_min))*desired_duty_cycle; % V
-output_on_resistance = 0.55; % ohms
+output_on_resistance = 2; % ohms
 
 %% DC motor
 % Option 1: model param: by stall torque and no load speed
@@ -36,18 +36,18 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*8;
-k_i = (sample_bw_rad*R_m/10)*10;
+k_p = (sample_bw_rad*L_m/10)*12;
+k_i = (sample_bw_rad*R_m/10)*8;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*900;
-k_i_w = ((sample_bw_rad*rotor_damping)/100)*1;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*1300;
+k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 52;
+k_p_p = 35;
 k_i_p = 1;
 k_d_p = 0.001;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
-speed_ramp_t = 0.05;
+speed_ramp_t = 0.1;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
 t_final = 4.5;
 period = (1/sample_freq)*0.01;
