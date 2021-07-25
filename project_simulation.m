@@ -29,7 +29,7 @@ center_distance = base_gear+follower_gear;
 % J_total =  J_1 + (J_2/(gear_ratio)^2); 
 
 %% specify how much to swing the arm and rest position
-arm_swing_angle = -45; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_swing_angle = -65; %degrees (rotating clockwise, maximum start at 180 degrees) 
 arm_start_angle = 180; 
 
 %% start positions at ball launch from origin, used for simulink, script
