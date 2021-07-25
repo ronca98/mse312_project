@@ -9,22 +9,22 @@ end
 desired_duty_cycle = 1; 
 pwm_freq = 4000; % Hz
 Vm_min = 0; %V
-Vm_max = 45; %V
+Vm_max = 24; %V
 command_voltage = (Vm_min + (Vm_max-Vm_min))*desired_duty_cycle; % V
 output_on_resistance = 2; % ohms
 
 %% DC motor
 % Option 1: model param: by stall torque and no load speed
 % Electrical 
-rated_dc_supply_voltage = 45; %V
-R_m = 0.708; % equivalent motor resistance, Ohm
-L_m = 0.0035; % armature inductance H
-no_load_speed = 5600; % rpm
-stall_torque = 5.3; % N*m
-torque_const = 8.05e-02; % N*m/A
+rated_dc_supply_voltage = 24; %V
+R_m = 0.7; % equivalent motor resistance, Ohm
+L_m = 0.00105; % armature inductance H
+no_load_speed = 3700; % rpm
+stall_torque = 2.0; % N*m
+torque_const = 0.059; % N*m/A
 
 % Mechanical 
-gear_ratio_int = 0.9;
+gear_ratio_int = 0.6;
 gear_ratio_ext = 4.8;
 system_inertia = 2.4933e-04; % kg*m^2
 rotor_inertia = gear_ratio_int^2*3.5e-05; %+ system_inertia; % kg*m^2
@@ -36,13 +36,13 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*4;
-k_i = (sample_bw_rad*R_m/10)*1;
+k_p = (sample_bw_rad*L_m/10)*6;
+k_i = (sample_bw_rad*R_m/10)*4;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2000;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*3600;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 30;
+k_p_p = 38;
 k_i_p = 1;
 k_d_p = 0.001;
 % reference signal
