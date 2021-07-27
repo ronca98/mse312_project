@@ -113,40 +113,28 @@ model = sim("final_simscape.slx", t_final);
 
 %% Load data from Simulink
 time_vector = model.speed_rpm.Time;
-
 current_vector = model.current.Data;
 power_vector = model.power.Data;
 voltage_vector = model.voltage.Data;
-
 speed_ref_vector = model.speed_rpm_ref.Data;
 position_ref_vector = model.position_deg_ref.Data;
 position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
-driving_torque_vector = model.driving_torque.Data;
+x_data = model.position_x.Data+x0_rest;
+y_data = model.position_y.Data+y0_rest;
+impact_force_data = model.impact_force.Data;
 
 %% Plot Data
-% Various Electrical Plots
-figure;
-subplot(2, 2, 1); plot(time_vector, power_vector); grid on;
-title("Power (W)")
-subplot(2, 2, 2); plot(time_vector, current_vector); grid on;
-title("Current (A)")
-subplot(2, 2, 3); plot(time_vector, voltage_vector); grid on;
-title("Voltage (V)")
-subplot(2, 2, 4); plot(time_vector, speed_vector); grid on;
-title("Speed (RPM)")
 
-% Reference vs Actual Speed
+% Ball x vs y Position
 figure
-plot(time_vector, speed_ref_vector);
+plot(x_data, y_data)
 hold on
-plot(time_vector, speed_vector);
+ylabel("position y (m)")
+yyaxis right
+plot(x_data, impact_force_data)
 hold off
-grid on
-legend("speed reference", "speed actual");
-
-title("\omega (RPM)")
-xlabel("time (s)")
+xlabel("position x (m)")
 
 % Reference vs Actual Position
 figure
@@ -159,6 +147,17 @@ legend("position reference", "position actual")
 title("\theta (degrees)")
 xlabel("time (s)")
 
+% Reference vs Actual Speed
+figure
+plot(time_vector, speed_ref_vector);
+hold on
+plot(time_vector, speed_vector);
+hold off
+grid on
+legend("speed reference", "speed actual");
+title("\omega (RPM)")
+xlabel("time (s)")
+
 % Plot Errors
 figure;
 subplot(2, 2, 1); plot(time_vector, model.error_position.Data); grid on;
@@ -168,26 +167,45 @@ title("Speed Error")
 subplot(2, 2, 3); plot(time_vector, model.error_current.Data); grid on;
 title("Current Error")
 
-%% Obtain calculations from Data
+% Various Electrical Plots
+figure;
+subplot(2, 2, 1); plot(time_vector, power_vector); grid on;
+title("Power (W)")
+subplot(2, 2, 2); plot(time_vector, current_vector); grid on;
+title("Current (A)")
+subplot(2, 2, 3); plot(time_vector, voltage_vector); grid on;
+title("Voltage (V)")
+subplot(2, 2, 4); plot(time_vector, speed_vector); grid on;
+title("Speed (RPM)")
+
+
+%% Electrical and Controls Calculations 
 data_array = cat(2, ...
                  power_vector, current_vector, voltage_vector, ...
-                 time_vector, position_vector, speed_vector, driving_torque_vector);            
+                 time_vector, position_vector, speed_vector);   
+
+% calculations related to electrical
 swing_angle = pos_d;
 filtered_current_vector = data_array(:, 2);
 [~, idx] = max(abs(filtered_current_vector));
 peak_current = filtered_current_vector(idx);
-
-[~, idx] = max(position_vector);
-
 launch_power = data_array(idx, 1);
 launch_voltage = data_array(idx, 3);
 
+% calculations related to launch
+[~, idx] = max(position_vector);
 launch_time = data_array(idx, 4);
 launch_angle = data_array(idx, 5);
 launch_speed = max(data_array(:, 6));
 
+% calculations related to ball impact
+ball_data = cat(2, time_vector, x_data, impact_force_data);
+ball_data = ball_data(ball_data(:, 3) > 0, :);
+t_data_land = ball_data(1,1);
+x_data_land = ball_data(1,2);
+y_data_max = max(y_data);
+
 %% display information for user
-disp("electrical_params.m:")
 electrical_info = ["Peak Current: ", peak_current, ... 
                    "Power: ", launch_power, ...
                    "Voltage: ", launch_voltage];
@@ -197,6 +215,11 @@ mechanical_info = ["Launch time:", launch_time, ...
                    "Launch angle: ", launch_angle, ...
                    "Launch_speed: ", launch_speed];          
 disp(mechanical_info)
+
+ball_info = ["t_data_land (s): ", t_data_land, ...
+             "x_data_land (m): ", x_data_land, ...
+             "y_data_max (m): ", y_data_max];
+disp(ball_info)
 
 
 
