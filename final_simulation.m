@@ -1,6 +1,6 @@
 close all
 clc
-clear all
+% clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -15,8 +15,8 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-polynomial_coeffs = readmatrix("curve_fit_model_5.csv");
-x_specified = 0.3;
+polynomial_coeffs = readmatrix("curve_fit_model_2_5.csv");
+% x_specified = 0.9;
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
