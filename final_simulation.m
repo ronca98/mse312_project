@@ -15,8 +15,8 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% specify how much to swing the arm and rest position
-arm_swing_angle = -65; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 180; 
+arm_swing_angle = -90; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 4.09; %(cm)
@@ -89,14 +89,16 @@ input_y = cat(1, y_phase_one', y_phase_two');
 input_y_integral = cumtrapz(input_time, input_y*0.10472);
 w_ref = [input_time, input_y];
 % determine the time when phase 2 ends 
-position_array = cat(2, input_time, input_y_integral*(180/pi));
-phase_one_and_two = position_array(position_array(:, 2) < pos_d, :);
+pos_d_offset = abs(180-arm_start_angle);
+position_array = cat(2, input_time, (input_y_integral*(180/pi)) - pos_d_offset);
+
+phase_one_and_two = position_array(position_array(:, 2) < pos_d - pos_d_offset, :);
 t_ref_launch = phase_one_and_two(end, 1);
 
 %% generate input signal for position
 n_pts = 7;
 time_pts_phase_three = t_ref_launch + linspace(0, t_final, 7);
-y_pts_phase_three = linspace(pos_d, 0, 7);
+y_pts_phase_three = linspace(phase_one_and_two(end), 0, 7);
 y_pts_phase_three(2) = y_pts_phase_three(2)*0.7;
 y_pts_phase_three(3) = y_pts_phase_three(2)*0.6;
 y_pts_phase_three(4) = y_pts_phase_three(4)*0.4;
