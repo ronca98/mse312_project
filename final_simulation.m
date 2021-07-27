@@ -16,11 +16,11 @@ center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
 polynomial_coeffs = readmatrix("curve_fit_model_5.csv");
-x_specified = 1.5;
+x_specified = 0.3;
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 200; 
+arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 4.09; %(cm)
@@ -64,20 +64,20 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*8;
-k_i = (sample_bw_rad*R_m/10)*6;
+k_p = (sample_bw_rad*L_m/10)*10;
+k_i = (sample_bw_rad*R_m/10)*4;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*3600;
-k_i_w = ((sample_bw_rad*rotor_damping)/100);
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2900;
+k_i_w = ((sample_bw_rad*rotor_damping)/100)*100;
 % Position
-k_p_p = 50;
-k_i_p = 1;
-k_d_p = 0.001;
+k_p_p = 55;
+k_i_p = 25;
+k_d_p = 0.01;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
 speed_ramp_t = 0.08;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
-t_final = 4.5;
+t_final = 5;
 period = (1/sample_freq)*0.01;
 
 %% generate input signal for speed

@@ -1,5 +1,5 @@
 
-swing_angles = linspace(-50, -105, 56);
+swing_angles = linspace(-50, -105, 12);
 x_distances = zeros(1, length(swing_angles));
 y_heights = zeros(1, length(swing_angles));
 for index = 1:length(swing_angles)
