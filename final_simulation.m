@@ -15,7 +15,7 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% specify how much to swing the arm and rest position
-arm_swing_angle = -90; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_swing_angle = -105; %degrees (rotating clockwise, maximum start at 180 degrees) 
 arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
@@ -60,18 +60,18 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*6;
-k_i = (sample_bw_rad*R_m/10)*4;
+k_p = (sample_bw_rad*L_m/10)*8;
+k_i = (sample_bw_rad*R_m/10)*6;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*3600;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*4000;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 38;
+k_p_p = 50;
 k_i_p = 1;
 k_d_p = 0.001;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
-speed_ramp_t = 0.1;
+speed_ramp_t = 0.08;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
 t_final = 4.5;
 period = (1/sample_freq)*0.01;
@@ -98,15 +98,16 @@ t_ref_launch = phase_one_and_two(end, 1);
 %% generate input signal for position
 n_pts = 7;
 time_pts_phase_three = t_ref_launch + linspace(0, t_final, 7);
-y_pts_phase_three = linspace(phase_one_and_two(end), 0, 7);
-y_pts_phase_three(2) = y_pts_phase_three(2)*0.7;
-y_pts_phase_three(3) = y_pts_phase_three(2)*0.6;
-y_pts_phase_three(4) = y_pts_phase_three(4)*0.4;
-y_pts_phase_three(5) = y_pts_phase_three(5)*0.2;
-y_pts_phase_three(6) = y_pts_phase_three(6)*0.1;
+y_pts_phase_three = linspace(phase_one_and_two(end), 0-pos_d_offset, 7);
+y_pts_phase_three(2) = y_pts_phase_three(2)-y_pts_phase_three(2)*0.3;
+y_pts_phase_three(3) = y_pts_phase_three(2)-y_pts_phase_three(2)*0.4;
+y_pts_phase_three(4) = y_pts_phase_three(4)-y_pts_phase_three(2)*0.6;
+y_pts_phase_three(5) = y_pts_phase_three(5)-y_pts_phase_three(2)*0.3;
+y_pts_phase_three(6) = y_pts_phase_three(6)-y_pts_phase_three(2)*0.25;
 time_phase_three = t_ref_launch + (0:period:t_final);
 quintic_polynomial = polyfit(time_pts_phase_three, y_pts_phase_three, 5);
 y_phase_three = polyval(quintic_polynomial, time_phase_three);
+
 phase_three = cat(2, time_phase_three', y_phase_three');
 pos_ref = cat(1, phase_one_and_two, phase_three);
 
