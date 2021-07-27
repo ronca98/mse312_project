@@ -14,8 +14,12 @@ follower_gear = 3.849;
 gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
+%% use model to give launch angle for specified distance
+polynomial_coeffs = readmatrix("curve_fit_model_5.csv");
+x_specified = 1.5;
+
 %% specify how much to swing the arm and rest position
-arm_swing_angle = -65.276960116976530; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
 arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
