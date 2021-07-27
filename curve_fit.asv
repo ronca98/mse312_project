@@ -1,0 +1,11 @@
+
+swing_angles = [-50, -60];
+x_distances = [];
+y_heights = [];
+for idx = 1:length(swing_angles)
+    arm_swing_angle = swing_angles(idx);
+    final_simulation;
+    x_distances[idx] = x_data_land;
+    y_heights[idx] -=
+end
+	

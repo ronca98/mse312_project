@@ -15,7 +15,7 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% specify how much to swing the arm and rest position
-arm_swing_angle = -105; %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_swing_angle = -65.276960116976530; %degrees (rotating clockwise, maximum start at 180 degrees) 
 arm_start_angle = 200; 
 
 %% start positions at ball launch from origin, used for simulink, script
@@ -63,7 +63,7 @@ sample_bw_rad = 2*pi*sample_freq;
 k_p = (sample_bw_rad*L_m/10)*8;
 k_i = (sample_bw_rad*R_m/10)*6;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*4000;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*3600;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
 k_p_p = 50;
