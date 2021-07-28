@@ -20,7 +20,7 @@ polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-% arm_swing_angle = -90.8;
+% arm_swing_angle = -51.8;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
@@ -68,17 +68,17 @@ sample_bw_rad = 2*pi*sample_freq;
 k_p = (sample_bw_rad*L_m/10)*8;
 k_i = (sample_bw_rad*R_m/10)*5;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*3000;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*1800;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 43;
+k_p_p = 20;
 k_i_p = 1;
 k_d_p = 0.01;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
-speed_ramp_t = 0.08;
+speed_ramp_t = 0.06;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
-t_final = 5;
+t_final = 4.5;
 period = (1/sample_freq)*0.01;
 
 %% generate input signal for speed
