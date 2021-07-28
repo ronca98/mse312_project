@@ -1,5 +1,5 @@
 
-swing_angles = linspace(-50, -105, 23);
+swing_angles = linspace(-50, -110, 13);
 x_distances = zeros(1, length(swing_angles));
 y_heights = zeros(1, length(swing_angles));
 for index = 1:length(swing_angles)
@@ -11,4 +11,4 @@ for index = 1:length(swing_angles)
 end
 	
 csv_array = [swing_angles', x_distances' , y_heights'];
-writematrix(csv_array, "curve_fit_model_data.csv");
+writematrix(csv_array, "curve_fit_model_data_5.csv");
