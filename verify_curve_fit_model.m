@@ -1,5 +1,6 @@
 
-x_distances_specified = linspace(0.3, 1.5, 13);
+x_distances_specified = linspace(0.2, 1.5, 14);
+% x_distances_specified = [1.4, 1.5];
 x_distances_actual = zeros(1, length(x_distances_specified));
 for index = 1:length(x_distances_specified)
     pause(5);
