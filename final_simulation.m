@@ -15,12 +15,12 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
+polynomial_coeffs = readmatrix("curve_fit_model_3_33.csv");
 % x_specified = 1.2;
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-% arm_swing_angle = -51.8;
+% arm_swing_angle = -75;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
@@ -65,13 +65,13 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*8;
+k_p = (sample_bw_rad*L_m/10)*10;
 k_i = (sample_bw_rad*R_m/10)*5;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*1800;
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2800;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 20;
+k_p_p = 25;
 k_i_p = 1;
 k_d_p = 0.01;
 % reference signal
@@ -139,8 +139,6 @@ figure
 plot(x_data, y_data)
 hold on
 ylabel("position y (m)")
-yyaxis right
-plot(x_data, impact_force_data)
 hold off
 xlabel("position x (m)")
 
@@ -207,10 +205,10 @@ launch_angle = data_array(idx, 5);
 launch_speed = max(data_array(:, 6));
 
 % calculations related to ball impact
-ball_data = cat(2, time_vector, x_data, impact_force_data);
+ball_data = cat(2, time_vector, x_data, y_data, impact_force_data);
 ball_data = ball_data(ball_data(:, 3) > 0, :);
-t_data_land = ball_data(1,1);
-x_data_land = ball_data(1,2);
+t_data_land = ball_data(end,1);
+x_data_land = ball_data(end,2);
 y_data_max = max(y_data);
 
 %% display information for user
