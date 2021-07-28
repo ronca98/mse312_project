@@ -15,7 +15,7 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-polynomial_coeffs = readmatrix("curve_fit_model_2.csv");
+polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
 % x_specified = 1.2;
 
 %% specify how much to swing the arm and rest position
