@@ -16,16 +16,16 @@ center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
 polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
-% x_specified = 1.2;
+% x_specified = 1.5;
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-%arm_swing_angle = -75;
+% arm_swing_angle = -69;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 4.09; %(cm)
-z_distance_arm = 6.5; %cm
+z_distance_arm = 5.5; %cm
 
 x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
 x0_rest = cg_ball*cosd(arm_start_angle);
@@ -71,7 +71,7 @@ k_i = (sample_bw_rad*R_m/10)*5;
 k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2800;
 k_i_w = ((sample_bw_rad*rotor_damping)/100);
 % Position
-k_p_p = 25;
+k_p_p = 24.5;
 k_i_p = 1;
 k_d_p = 0.01;
 % reference signal
@@ -117,7 +117,7 @@ phase_three = cat(2, time_phase_three', y_phase_three');
 pos_ref = cat(1, phase_one_and_two, phase_three);
 
 %% run simulation
-model = sim("final_simscape.slx", t_final);
+model = sim("final_simscape.slx", t_final+0.15);
 
 %% Load data from Simulink
 time_vector = model.speed_rpm.Time;
@@ -128,8 +128,8 @@ speed_ref_vector = model.speed_rpm_ref.Data;
 position_ref_vector = model.position_deg_ref.Data;
 position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
-x_data = model.position_x.Data+x0_rest;
-y_data = model.position_y.Data+y0_rest;
+x_data = model.position_x.Data;
+y_data = model.position_y.Data;
 impact_force_data = model.impact_force.Data;
 
 %% Plot Data
@@ -206,10 +206,16 @@ launch_speed = max(data_array(:, 6));
 
 % calculations related to ball impact
 ball_data = cat(2, time_vector, x_data, y_data, impact_force_data);
-ball_data = ball_data(ball_data(:, 3) > 0, :);
-t_data_land = ball_data(end,1);
-x_data_land = ball_data(end,2);
+ball_data = ball_data(ball_data(:, 3) < 0.01, :);
+t_data_land = ball_data(1,1);
+x_data_land = ball_data(1,2);
 y_data_max = max(y_data);
+
+% calculations for time when arm goes back to rest
+arm_data = cat(2, time_vector, position_vector);
+arm_data = arm_data(arm_data(:, 2) > (180-arm_start_angle), :);
+t_retract = arm_data(end, 1);
+t_retract_angle = arm_data(end, 2);
 
 %% display information for user
 electrical_info = ["Peak Current: ", peak_current, ... 
