@@ -1,6 +1,6 @@
 close all
 clc
-% clear all
+clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -15,12 +15,12 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-% polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
-% x_specified = 0.42;
+polynomial_coeffs = readmatrix("curve_fit_model_1_fast.csv");
+x_specified = 1.5;
 
 %% specify how much to swing the arm and rest position
-% arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_swing_angle = -65;
+arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
+% arm_swing_angle = -43;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
@@ -241,9 +241,9 @@ power_info = ["Max Power Usage (W):", max_power];
 information_array = cat(1, ball_info, arm_timer_info, power_info);
           
 disp(information_array);
-% results_file_name = "%gm_target_results.txt";
-% results_file_name = sprintf(results_file_name, x_specified);
-% writematrix(information_array, results_file_name);
+results_file_name = "%gm_target_results.txt";
+results_file_name = sprintf(results_file_name, x_specified);
+writematrix(information_array, results_file_name);
 
 
 
