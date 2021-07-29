@@ -131,6 +131,9 @@ speed_vector = model.speed_rpm.Data;
 x_data = model.position_x.Data;
 y_data = model.position_y.Data;
 impact_force_data = model.impact_force.Data;
+back_to_start_timer = model.timer.Data;
+back_to_start_timer = round(back_to_start_timer, 2);
+back_to_start_position = model.position_deg_final_timer.Data;
 
 %% Plot Data
 
@@ -210,12 +213,6 @@ ball_data = ball_data(ball_data(:, 3) < 0.01, :);
 t_data_land = ball_data(1,1);
 x_data_land = ball_data(1,2);
 y_data_max = max(y_data);
-
-% calculations for time when arm goes back to rest
-arm_data = cat(2, time_vector, position_vector);
-arm_data = arm_data(arm_data(:, 2) > (180-arm_start_angle), :);
-t_retract = arm_data(end, 1);
-t_retract_angle = arm_data(end, 2);
 
 %% display information for user
 electrical_info = ["Peak Current: ", peak_current, ... 
