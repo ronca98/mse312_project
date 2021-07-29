@@ -1,6 +1,6 @@
 close all
 clc
-clear all
+% clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -15,12 +15,12 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
-x_specified = 0.42;
+% polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
+% x_specified = 0.42;
 
 %% specify how much to swing the arm and rest position
-arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-% arm_swing_angle = -69;
+% arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
+arm_swing_angle = -65;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
@@ -68,17 +68,17 @@ sample_bw_rad = 2*pi*sample_freq;
 k_p = (sample_bw_rad*L_m/10)*10;
 k_i = (sample_bw_rad*R_m/10)*5;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2800;
-k_i_w = ((sample_bw_rad*rotor_damping)/100);
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2000;
+k_i_w = ((sample_bw_rad*rotor_damping)/100)*3000;
 % Position
-k_p_p = 24.5;
+k_p_p = 32;
 k_i_p = 1;
 k_d_p = 0.01;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
-speed_ramp_t = 0.06;
+speed_ramp_t = 0.055;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
-t_final = 4.5;
+t_final = 3;
 period = (1/sample_freq)*0.01;
 
 %% generate input signal for speed
@@ -241,9 +241,9 @@ power_info = ["Max Power Usage (W):", max_power];
 information_array = cat(1, ball_info, arm_timer_info, power_info);
           
 disp(information_array);
-results_file_name = "%gm_target_results.txt";
-results_file_name = sprintf(results_file_name, x_specified);
-writematrix(information_array, results_file_name);
+% results_file_name = "%gm_target_results.txt";
+% results_file_name = sprintf(results_file_name, x_specified);
+% writematrix(information_array, results_file_name);
 
 
 
