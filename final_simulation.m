@@ -1,6 +1,6 @@
 close all
 clc
-% clear all
+clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -16,7 +16,7 @@ center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
 polynomial_coeffs = readmatrix("curve_fit_model_1.csv");
-% x_specified = 1.5;
+x_specified = 0.42;
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
@@ -188,24 +188,28 @@ subplot(2, 2, 4); plot(time_vector, speed_vector); grid on;
 title("Speed (RPM)")
 
 
-%% Electrical and Controls Calculations 
-data_array = cat(2, ...
-                 power_vector, current_vector, voltage_vector, ...
-                 time_vector, position_vector, speed_vector);   
+%% Various Calculations
+% data_array = cat(2, ...
+%                  power_vector, current_vector, voltage_vector, ...
+%                  time_vector, position_vector, speed_vector);   
 
 % calculations related to electrical
-swing_angle = pos_d;
-filtered_current_vector = data_array(:, 2);
-[~, idx] = max(abs(filtered_current_vector));
-peak_current = filtered_current_vector(idx);
-launch_power = data_array(idx, 1);
-launch_voltage = data_array(idx, 3);
+% swing_angle = pos_d;
+% filtered_current_vector = data_array(:, 2);
+% [~, idx] = max(abs(filtered_current_vector));
+% peak_current = filtered_current_vector(idx);
+% launch_power = data_array(idx, 1);
+% launch_voltage = data_array(idx, 3);
 
 % calculations related to launch
-[~, idx] = max(position_vector);
-launch_time = data_array(idx, 4);
-launch_angle = data_array(idx, 5);
-launch_speed = max(data_array(:, 6));
+% [~, idx] = max(position_vector);
+% launch_time = data_array(idx, 4);
+% launch_angle = data_array(idx, 5);
+% launch_speed = max(data_array(:, 6));
+
+% calculations for power usage
+max_power = round(max(power_vector), 2);
+avg_power = round(mean(power_vector), 2);
 
 % calculations related to ball impact
 ball_data = cat(2, time_vector, x_data, y_data, impact_force_data);
@@ -215,20 +219,33 @@ x_data_land = ball_data(1,2);
 y_data_max = max(y_data);
 
 %% display information for user
-electrical_info = ["Peak Current: ", peak_current, ... 
-                   "Power: ", launch_power, ...
-                   "Voltage: ", launch_voltage];
-disp(electrical_info)
-              
-mechanical_info = ["Launch time:", launch_time, ...
-                   "Launch angle: ", launch_angle, ...
-                   "Launch_speed: ", launch_speed];          
-disp(mechanical_info)
+% electrical_info = ["Peak Current: ", peak_current, ... 
+%                    "Power: ", launch_power, ...
+%                    "Voltage: ", launch_voltage];
+% disp(electrical_info)
+%               
+% mechanical_info = ["Launch time:", launch_time, ...
+%                    "Launch angle: ", launch_angle, ...
+%                    "Launch_speed: ", launch_speed];          
+% disp(mechanical_info)
 
-ball_info = ["t_data_land (s): ", t_data_land, ...
-             "x_data_land (m): ", x_data_land, ...
+ball_info = ["t_data_land (s): ", t_data_land;
+             "x_data_land (m): ", x_data_land;
              "y_data_max (m): ", y_data_max];
-disp(ball_info)
+         
+arm_timer_info = ["t_back_to_rest (s):", back_to_start_timer(end);
+                  "angle at this time (deg):", back_to_start_position(end)];
+         
+power_info = ["Max Power Usage (W):", max_power];
+
+information_array = cat(1, ball_info, arm_timer_info, power_info);
+          
+disp(information_array);
+results_file_name = "%gm_target_results.txt";
+results_file_name = sprintf(results_file_name, x_specified);
+writematrix(information_array, results_file_name);
+
+
 
 
 
