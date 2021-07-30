@@ -4,7 +4,7 @@ close all
 clc
 
 % x_distances_specified = linspace(0.2, 1.3, 111);
-x_distances_specified = [0.2, 0.5, 1.5];
+x_distances_specified = [0.26, 0.63, 1.5, 1.92, 1.43];
 x_distances_actual = zeros(1, length(x_distances_specified));
 timer_results = zeros(1, length(x_distances_specified));
 timer_results_position = zeros(1, length(x_distances_specified));

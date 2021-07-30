@@ -18,6 +18,10 @@ center_distance = base_gear+follower_gear;
 polynomial_coeffs = readmatrix("curve_fit_model_1_fast.csv");
 x_specified = 1.5;
 
+if x_specified > 1.5
+   polynomial_coeffs = readmatrix("curve_fit_model_1_farthest_distance.csv");
+end
+
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
 % arm_swing_angle = -43;
@@ -209,7 +213,7 @@ title("Speed (RPM)")
 
 % calculations for power usage
 max_power = round(max(power_vector), 2);
-avg_power = round(mean(power_vector), 2);
+consumed_power = round(sum(power_vector), 2);
 
 % calculations related to ball impact
 ball_data = cat(2, time_vector, x_data, y_data, impact_force_data);
@@ -236,7 +240,8 @@ ball_info = ["t_data_land (s): ", t_data_land;
 arm_timer_info = ["t_back_to_rest (s):", back_to_start_timer(end);
                   "angle at this time (deg):", back_to_start_position(end)];
          
-power_info = ["Max Power Usage (W):", max_power];
+power_info = ["Max Power (W):", max_power;
+              "Power Consumed (W)", consumed_power];
 
 information_array = cat(1, ball_info, arm_timer_info, power_info);
           
