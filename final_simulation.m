@@ -127,6 +127,7 @@ model = sim("final_simscape.slx", t_final+0.15);
 time_vector = model.speed_rpm.Time;
 current_vector = model.current.Data;
 power_vector = model.power.Data;
+power_consumption_vector = model.power_consumption.Data;
 voltage_vector = model.voltage.Data;
 speed_ref_vector = model.speed_rpm_ref.Data;
 position_ref_vector = model.position_deg_ref.Data;
@@ -134,7 +135,6 @@ position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
 x_data = model.position_x.Data;
 y_data = model.position_y.Data;
-impact_force_data = model.impact_force.Data;
 back_to_start_timer = model.timer.Data;
 back_to_start_timer = round(back_to_start_timer, 2);
 back_to_start_position = model.position_deg_final_timer.Data;
@@ -188,8 +188,8 @@ subplot(2, 2, 2); plot(time_vector, current_vector); grid on;
 title("Current (A)")
 subplot(2, 2, 3); plot(time_vector, voltage_vector); grid on;
 title("Voltage (V)")
-subplot(2, 2, 4); plot(time_vector, speed_vector); grid on;
-title("Speed (RPM)")
+subplot(2, 2, 4); plot(time_vector, power_consumption_vector); grid on;
+title("Power Consumption (mWh)")
 
 
 %% Various Calculations
@@ -213,10 +213,10 @@ title("Speed (RPM)")
 
 % calculations for power usage
 max_power = round(max(power_vector), 2);
-consumed_power = round(sum(power_vector), 2);
+consumed_power = round(max(power_consumption_vector), 2);
 
 % calculations related to ball impact
-ball_data = cat(2, time_vector, x_data, y_data, impact_force_data);
+ball_data = cat(2, time_vector, x_data, y_data);
 ball_data = ball_data(ball_data(:, 3) < 0.01, :);
 t_data_land = ball_data(1,1);
 x_data_land = ball_data(1,2);
@@ -241,7 +241,7 @@ arm_timer_info = ["t_back_to_rest (s):", back_to_start_timer(end);
                   "angle at this time (deg):", back_to_start_position(end)];
          
 power_info = ["Max Power (W):", max_power;
-              "Power Consumed (W)", consumed_power];
+              "Power Consumed (mWh)", consumed_power];
 
 information_array = cat(1, ball_info, arm_timer_info, power_info);
           
