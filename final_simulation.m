@@ -1,6 +1,6 @@
 close all
 clc
-clear all
+% clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -15,28 +15,28 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-polynomial_coeffs = readmatrix("curve_fit_model_1_fast.csv");
-x_specified = 1.5;
+polynomial_coeffs = readmatrix("curve_fit_model.csv");
+% x_specified = 1.5;
 
 if x_specified > 1.5
-   polynomial_coeffs = readmatrix("curve_fit_model_1_farthest_distance.csv");
+   polynomial_coeffs = readmatrix("farthest_distance_model.csv");
 end
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-% arm_swing_angle = -43;
+% arm_swing_angle = -70;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
-rotation_pivot_height = 4.09; %(cm)
+rotation_input_height = 4.09; %(cm)
 z_distance_arm = 5.5; %cm
 
 x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
 x0_rest = cg_ball*cosd(arm_start_angle);
 y0 = cg_ball*sind(arm_start_angle + arm_swing_angle) ... 
-          + ((rotation_pivot_height+1.05+r_ball+center_distance)/100) ; % initial y position (of ball)(m)
+          + (((rotation_input_height+1.05+center_distance)/100) + r_ball) ; % initial y position (of ball)(m)
 y0_rest = cg_ball*sind(arm_start_angle) ... 
-          + ((rotation_pivot_height+1.05+r_ball+center_distance)/100);
+          + (((rotation_input_height+1.05+center_distance)/100) + r_ball);
 
 %% input voltage, PWM and H-Bridge
 desired_duty_cycle = 1; 
@@ -138,6 +138,8 @@ y_data = model.position_y.Data;
 back_to_start_timer = model.timer.Data;
 back_to_start_timer = round(back_to_start_timer, 2);
 back_to_start_position = model.position_deg_final_timer.Data;
+x_data_impact = model.position_x_impact.Data;
+t_data_impact = model.position_x_timer.Data;
 
 %% Plot Data
 
@@ -216,10 +218,8 @@ max_power = round(max(power_vector), 2);
 consumed_power = round(max(power_consumption_vector), 2);
 
 % calculations related to ball impact
-ball_data = cat(2, time_vector, x_data, y_data);
-ball_data = ball_data(ball_data(:, 3) < 0.01, :);
-t_data_land = ball_data(1,1);
-x_data_land = ball_data(1,2);
+t_data_land = t_data_impact(end);
+x_data_land = x_data_impact(end);
 y_data_max = max(y_data);
 
 %% display information for user

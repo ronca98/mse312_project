@@ -16,4 +16,4 @@ for index = 1:length(swing_angles)
 end
 	
 csv_array = [swing_angles', x_distances' , y_heights'];
-writematrix(csv_array, "curve_fit_model_data_1_farthest_distance.csv");
+writematrix(csv_array, "farthest_distance_model_data.csv");
