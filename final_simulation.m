@@ -14,13 +14,22 @@ follower_gear = 3.849;
 gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
+%% use model to give launch angle for specified distance
+polynomial_coeffs = readmatrix("curve_fit_model_1_fast.csv");
+x_specified = 1.5;
+
+if x_specified > 1.5
+   polynomial_coeffs = readmatrix("curve_fit_model_1_farthest_distance.csv");
+end
+
 %% specify how much to swing the arm and rest position
-arm_swing_angle = -105; %degrees (rotating clockwise, maximum start at 180 degrees) 
-arm_start_angle = 200; 
+arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
+% arm_swing_angle = -43;
+arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_pivot_height = 4.09; %(cm)
-z_distance_arm = 6.5; %cm
+z_distance_arm = 5.5; %cm
 
 x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
 x0_rest = cg_ball*cosd(arm_start_angle);
@@ -60,20 +69,20 @@ train_ratio = gear_ratio_int*gear_ratio_ext;
 sample_freq = 128;
 sample_bw_rad = 2*pi*sample_freq;
 % Current
-k_p = (sample_bw_rad*L_m/10)*8;
-k_i = (sample_bw_rad*R_m/10)*6;
+k_p = (sample_bw_rad*L_m/10)*10;
+k_i = (sample_bw_rad*R_m/10)*5;
 % Speed
-k_p_w = ((sample_bw_rad*rotor_inertia)/100)*4000;
-k_i_w = ((sample_bw_rad*rotor_damping)/100);
+k_p_w = ((sample_bw_rad*rotor_inertia)/100)*2000;
+k_i_w = ((sample_bw_rad*rotor_damping)/100)*3000;
 % Position
-k_p_p = 50;
+k_p_p = 32;
 k_i_p = 1;
-k_d_p = 0.001;
+k_d_p = 0.01;
 % reference signal
 pos_d = -arm_swing_angle; % degrees
-speed_ramp_t = 0.08;
+speed_ramp_t = 0.055;
 w_d = (pos_d/speed_ramp_t)*(pi/180)*9.55; % rpm
-t_final = 4.5;
+t_final = 3;
 period = (1/sample_freq)*0.01;
 
 %% generate input signal for speed
@@ -112,7 +121,7 @@ phase_three = cat(2, time_phase_three', y_phase_three');
 pos_ref = cat(1, phase_one_and_two, phase_three);
 
 %% run simulation
-model = sim("final_simscape.slx", t_final);
+model = sim("final_simscape.slx", t_final+0.15);
 
 %% Load data from Simulink
 time_vector = model.speed_rpm.Time;
@@ -123,9 +132,12 @@ speed_ref_vector = model.speed_rpm_ref.Data;
 position_ref_vector = model.position_deg_ref.Data;
 position_vector = model.position_deg.Data;
 speed_vector = model.speed_rpm.Data;
-x_data = model.position_x.Data+x0_rest;
-y_data = model.position_y.Data+y0_rest;
+x_data = model.position_x.Data;
+y_data = model.position_y.Data;
 impact_force_data = model.impact_force.Data;
+back_to_start_timer = model.timer.Data;
+back_to_start_timer = round(back_to_start_timer, 2);
+back_to_start_position = model.position_deg_final_timer.Data;
 
 %% Plot Data
 
@@ -134,8 +146,6 @@ figure
 plot(x_data, y_data)
 hold on
 ylabel("position y (m)")
-yyaxis right
-plot(x_data, impact_force_data)
 hold off
 xlabel("position x (m)")
 
@@ -182,47 +192,65 @@ subplot(2, 2, 4); plot(time_vector, speed_vector); grid on;
 title("Speed (RPM)")
 
 
-%% Electrical and Controls Calculations 
-data_array = cat(2, ...
-                 power_vector, current_vector, voltage_vector, ...
-                 time_vector, position_vector, speed_vector);   
+%% Various Calculations
+% data_array = cat(2, ...
+%                  power_vector, current_vector, voltage_vector, ...
+%                  time_vector, position_vector, speed_vector);   
 
 % calculations related to electrical
-swing_angle = pos_d;
-filtered_current_vector = data_array(:, 2);
-[~, idx] = max(abs(filtered_current_vector));
-peak_current = filtered_current_vector(idx);
-launch_power = data_array(idx, 1);
-launch_voltage = data_array(idx, 3);
+% swing_angle = pos_d;
+% filtered_current_vector = data_array(:, 2);
+% [~, idx] = max(abs(filtered_current_vector));
+% peak_current = filtered_current_vector(idx);
+% launch_power = data_array(idx, 1);
+% launch_voltage = data_array(idx, 3);
 
 % calculations related to launch
-[~, idx] = max(position_vector);
-launch_time = data_array(idx, 4);
-launch_angle = data_array(idx, 5);
-launch_speed = max(data_array(:, 6));
+% [~, idx] = max(position_vector);
+% launch_time = data_array(idx, 4);
+% launch_angle = data_array(idx, 5);
+% launch_speed = max(data_array(:, 6));
+
+% calculations for power usage
+max_power = round(max(power_vector), 2);
+consumed_power = round(sum(power_vector), 2);
 
 % calculations related to ball impact
-ball_data = cat(2, time_vector, x_data, impact_force_data);
-ball_data = ball_data(ball_data(:, 3) > 0, :);
+ball_data = cat(2, time_vector, x_data, y_data, impact_force_data);
+ball_data = ball_data(ball_data(:, 3) < 0.01, :);
 t_data_land = ball_data(1,1);
 x_data_land = ball_data(1,2);
 y_data_max = max(y_data);
 
 %% display information for user
-electrical_info = ["Peak Current: ", peak_current, ... 
-                   "Power: ", launch_power, ...
-                   "Voltage: ", launch_voltage];
-disp(electrical_info)
-              
-mechanical_info = ["Launch time:", launch_time, ...
-                   "Launch angle: ", launch_angle, ...
-                   "Launch_speed: ", launch_speed];          
-disp(mechanical_info)
+% electrical_info = ["Peak Current: ", peak_current, ... 
+%                    "Power: ", launch_power, ...
+%                    "Voltage: ", launch_voltage];
+% disp(electrical_info)
+%               
+% mechanical_info = ["Launch time:", launch_time, ...
+%                    "Launch angle: ", launch_angle, ...
+%                    "Launch_speed: ", launch_speed];          
+% disp(mechanical_info)
 
-ball_info = ["t_data_land (s): ", t_data_land, ...
-             "x_data_land (m): ", x_data_land, ...
+ball_info = ["t_data_land (s): ", t_data_land;
+             "x_data_land (m): ", x_data_land;
              "y_data_max (m): ", y_data_max];
-disp(ball_info)
+         
+arm_timer_info = ["t_back_to_rest (s):", back_to_start_timer(end);
+                  "angle at this time (deg):", back_to_start_position(end)];
+         
+power_info = ["Max Power (W):", max_power;
+              "Power Consumed (W)", consumed_power];
+
+information_array = cat(1, ball_info, arm_timer_info, power_info);
+          
+disp(information_array);
+results_file_name = "%gm_target_results.txt";
+results_file_name = sprintf(results_file_name, x_specified);
+writematrix(information_array, results_file_name);
+
+
 
 
 
