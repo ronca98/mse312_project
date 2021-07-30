@@ -1,6 +1,6 @@
 close all
 clc
-% clear all
+clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -16,7 +16,7 @@ center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
 polynomial_coeffs = readmatrix("curve_fit_model.csv");
-% x_specified = 1.5;
+x_specified = 1.5;
 
 if x_specified > 1.5
    polynomial_coeffs = readmatrix("farthest_distance_model.csv");
