@@ -3,7 +3,7 @@ clear all
 close all
 clc
 
-% x_distances_specified = linspace(0.2, 1.5, 111);
+% x_distances_specified = linspace(0.2, 1.5, 131);
 x_distances_specified = [0.26, 0.63, 1.5];
 % x_distances_specified = [1.89, 1.41];
 x_distances_actual = zeros(1, length(x_distances_specified));
