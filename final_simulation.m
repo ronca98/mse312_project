@@ -1,6 +1,6 @@
 close all
 clc
-clear all
+% clear all
 
 %% parameters from class Calculations used for simulink, script
 calc = Calculations;
@@ -16,7 +16,7 @@ center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
 polynomial_coeffs = readmatrix("curve_fit_model.csv");
-x_specified = 1.5;
+% x_specified = 0.5;
 
 if x_specified > 1.5
    polynomial_coeffs = readmatrix("farthest_distance_model.csv");
@@ -143,6 +143,10 @@ t_data_impact = model.position_x_timer.Data;
 
 %% Plot Data
 
+graph_results_folder = "%gm_graph_results";
+graph_results_folder = sprintf(graph_results_folder, x_specified);
+mkdir(graph_results_folder);
+
 % Ball x vs y Position
 figure
 plot(x_data, y_data)
@@ -150,6 +154,10 @@ hold on
 ylabel("position y (m)")
 hold off
 xlabel("position x (m)")
+graph1_file_name = "%gm_position_ball_x_vs_y.png";
+graph1_file_name = sprintf(graph1_file_name, x_specified);
+graph1_file_name = fullfile(graph_results_folder, graph1_file_name);
+saveas(gcf, graph1_file_name);
 
 % Reference vs Actual Position
 figure
@@ -161,6 +169,10 @@ grid on
 legend("position reference", "position actual")
 title("\theta (degrees)")
 xlabel("time (s)")
+graph2_file_name = "%gm_position_arm_ref_vs_actual.png";
+graph2_file_name = sprintf(graph2_file_name, x_specified);
+graph2_file_name = fullfile(graph_results_folder, graph2_file_name);
+saveas(gcf, graph2_file_name);
 
 % Reference vs Actual Speed
 figure
@@ -172,8 +184,12 @@ grid on
 legend("speed reference", "speed actual");
 title("\omega (RPM)")
 xlabel("time (s)")
+graph3_file_name = "%gm_speed_arm_ref_vs_actual.png";
+graph3_file_name = sprintf(graph3_file_name, x_specified);
+graph3_file_name = fullfile(graph_results_folder, graph3_file_name);
+saveas(gcf, graph3_file_name);
 
-% Plot Errors
+% Error Plots
 figure;
 subplot(2, 2, 1); plot(time_vector, model.error_position.Data); grid on;
 title("Position Error")
@@ -181,8 +197,12 @@ subplot(2, 2, 2); plot(time_vector, model.error_speed.Data); grid on;
 title("Speed Error")
 subplot(2, 2, 3); plot(time_vector, model.error_current.Data); grid on;
 title("Current Error")
+graph4_file_name = "%gm_error_plots.png";
+graph4_file_name = sprintf(graph4_file_name, x_specified);
+graph4_file_name = fullfile(graph_results_folder, graph4_file_name);
+saveas(gcf, graph4_file_name);
 
-% Various Electrical Plots
+% Electrical Plots
 figure;
 subplot(2, 2, 1); plot(time_vector, power_vector); grid on;
 title("Power (W)")
@@ -192,26 +212,12 @@ subplot(2, 2, 3); plot(time_vector, voltage_vector); grid on;
 title("Voltage (V)")
 subplot(2, 2, 4); plot(time_vector, power_consumption_vector); grid on;
 title("Power Consumption (mWh)")
-
+graph5_file_name = "%gm_electrical_plots.png";
+graph5_file_name = sprintf(graph5_file_name, x_specified);
+graph5_file_name = fullfile(graph_results_folder, graph5_file_name);
+saveas(gcf, graph5_file_name);
 
 %% Various Calculations
-% data_array = cat(2, ...
-%                  power_vector, current_vector, voltage_vector, ...
-%                  time_vector, position_vector, speed_vector);   
-
-% calculations related to electrical
-% swing_angle = pos_d;
-% filtered_current_vector = data_array(:, 2);
-% [~, idx] = max(abs(filtered_current_vector));
-% peak_current = filtered_current_vector(idx);
-% launch_power = data_array(idx, 1);
-% launch_voltage = data_array(idx, 3);
-
-% calculations related to launch
-% [~, idx] = max(position_vector);
-% launch_time = data_array(idx, 4);
-% launch_angle = data_array(idx, 5);
-% launch_speed = max(data_array(:, 6));
 
 % calculations for power usage
 max_power = round(max(power_vector), 2);
@@ -222,16 +228,7 @@ t_data_land = t_data_impact(end);
 x_data_land = x_data_impact(end);
 y_data_max = max(y_data);
 
-%% display information for user
-% electrical_info = ["Peak Current: ", peak_current, ... 
-%                    "Power: ", launch_power, ...
-%                    "Voltage: ", launch_voltage];
-% disp(electrical_info)
-%               
-% mechanical_info = ["Launch time:", launch_time, ...
-%                    "Launch angle: ", launch_angle, ...
-%                    "Launch_speed: ", launch_speed];          
-% disp(mechanical_info)
+%% display and output information for user
 
 ball_info = ["t_data_land (s): ", t_data_land;
              "x_data_land (m): ", x_data_land;
