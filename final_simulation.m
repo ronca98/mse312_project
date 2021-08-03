@@ -132,9 +132,13 @@ voltage_vector = model.voltage.Data;
 speed_ref_vector = model.speed_rpm_ref.Data;
 position_ref_vector = model.position_deg_ref.Data;
 position_vector = model.position_deg.Data;
+input_torque_vector = model.input_torque.Data;
+arm_acceleration_vector = model.arm_acceleration.Data;
 speed_vector = model.speed_rpm.Data;
 x_data = model.position_x.Data;
 y_data = model.position_y.Data;
+ball_velocity_vector = model.ball_velocity.Data;
+ball_acceleration_vector = model.ball_acceleration.Data;
 back_to_start_timer = model.timer.Data;
 back_to_start_timer = round(back_to_start_timer, 2);
 back_to_start_position = model.position_deg_final_timer.Data;
@@ -142,7 +146,6 @@ x_data_impact = model.position_x_impact.Data;
 t_data_impact = model.position_x_timer.Data;
 
 %% Plot Data
-
 graph_results_folder = "%gm_graph_results";
 graph_results_folder = sprintf(graph_results_folder, x_specified);
 mkdir(graph_results_folder);
@@ -154,10 +157,33 @@ hold on
 ylabel("position y (m)")
 hold off
 xlabel("position x (m)")
+title("Ball position x vs y")
 graph1_file_name = "%gm_position_ball_x_vs_y.png";
 graph1_file_name = sprintf(graph1_file_name, x_specified);
 graph1_file_name = fullfile(graph_results_folder, graph1_file_name);
 saveas(gcf, graph1_file_name);
+
+% Ball velocity vs time 
+figure
+plot(time_vector, ball_velocity_vector);
+ylabel("velocity (m/s)")
+xlabel("time (s)")
+title("Ball resultant velocity vs time")
+extra_graph1_file_name = "%gm_ball_velocity_vs_time.png";
+extra_graph1_file_name = sprintf(extra_graph1_file_name, x_specified);
+extra_graph1_file_name = fullfile(graph_results_folder, extra_graph1_file_name);
+saveas(gcf, extra_graph1_file_name);
+
+% Ball acceleration vs time 
+figure
+plot(time_vector, ball_acceleration_vector);
+ylabel("acceleration (m/s^2)")
+xlabel("time (s)")
+title("Ball resultant acceleration vs time")
+extra_graph2_file_name = "%gm_ball_acceleration_vs_time.png";
+extra_graph2_file_name = sprintf(extra_graph2_file_name, x_specified);
+extra_graph2_file_name = fullfile(graph_results_folder, extra_graph2_file_name);
+saveas(gcf, extra_graph2_file_name);
 
 % Reference vs Actual Position
 figure
@@ -167,7 +193,7 @@ plot(time_vector, position_vector);
 hold off
 grid on
 legend("position reference", "position actual")
-title("\theta (degrees)")
+title("Arm position \theta (degrees)")
 xlabel("time (s)")
 graph2_file_name = "%gm_position_arm_ref_vs_actual.png";
 graph2_file_name = sprintf(graph2_file_name, x_specified);
@@ -182,12 +208,32 @@ plot(time_vector, speed_vector);
 hold off
 grid on
 legend("speed reference", "speed actual");
-title("\omega (RPM)")
+title("Arm speed \omega (RPM)")
 xlabel("time (s)")
 graph3_file_name = "%gm_speed_arm_ref_vs_actual.png";
 graph3_file_name = sprintf(graph3_file_name, x_specified);
 graph3_file_name = fullfile(graph_results_folder, graph3_file_name);
 saveas(gcf, graph3_file_name);
+
+% Arm acceleration vs time
+figure
+plot(time_vector, arm_acceleration_vector);
+title("Arm acceleration \alpha (m/s^2)")
+xlabel("time (s)")
+extra_graph3_file_name = "%gm_arm_acceleration_vs_time.png";
+extra_graph3_file_name = sprintf(extra_graph3_file_name, x_specified);
+extra_graph3_file_name = fullfile(graph_results_folder, extra_graph3_file_name);
+saveas(gcf, extra_graph3_file_name);
+
+% Arm input torque vs time
+figure
+plot(time_vector, input_torque_vector);
+title("input motor Torque \tau (N-m)")
+xlabel("time (s)")
+extra_graph4_file_name = "%gm_input_torque_vs_time.png";
+extra_graph4_file_name = sprintf(extra_graph4_file_name, x_specified);
+extra_graph4_file_name = fullfile(graph_results_folder, extra_graph4_file_name);
+saveas(gcf, extra_graph4_file_name);
 
 % Error Plots
 figure;

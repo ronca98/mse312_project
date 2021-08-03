@@ -9,8 +9,6 @@ y_swing_angles = y_swing_angles(sortIdx);
 
 polynomial_coeffs = polyfit(x_x_distances, y_swing_angles, 4);
 y_curve_fit_model = polyval(polynomial_coeffs, x_x_distances);
-writematrix(polynomial_coeffs, "farthest_distance_model.csv")
+% writematrix(polynomial_coeffs, "curve_fit_model.csv")
 
 plot(x_x_distances, y_curve_fit_model)
-
-angle_predict = polyval(polynomial_coeffs, 0.75);
