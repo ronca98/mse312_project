@@ -16,7 +16,6 @@ center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
 polynomial_coeffs = readmatrix("curve_fit_model.csv");
-% x_specified = 0.5;
 
 if x_specified > 1.5
    polynomial_coeffs = readmatrix("farthest_distance_model.csv");
@@ -24,12 +23,12 @@ end
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
-% arm_swing_angle = -70;
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
 rotation_input_height = 4.09; %(cm)
-z_distance_arm = 5.5; %cm
+z_distance_arm = 3.75; %cm
+z_distance_gears = z_distance_arm+1;
 
 x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
 x0_rest = cg_ball*cosd(arm_start_angle);
@@ -140,13 +139,13 @@ y_data = model.position_y.Data;
 ball_velocity_vector = model.ball_velocity.Data;
 ball_acceleration_vector = model.ball_acceleration.Data;
 back_to_start_timer = model.timer.Data;
-back_to_start_timer = round(back_to_start_timer, 2);
+back_to_start_timer = round(back_to_start_timer, 4);
 back_to_start_position = model.position_deg_final_timer.Data;
 x_data_impact = model.position_x_impact.Data;
 t_data_impact = model.position_x_timer.Data;
 
 %% Plot Data
-graph_results_folder = "%gm_graph_results";
+graph_results_folder = "graphs_folder/%gm_graph_results";
 graph_results_folder = sprintf(graph_results_folder, x_specified);
 mkdir(graph_results_folder);
 
