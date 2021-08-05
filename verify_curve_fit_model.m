@@ -13,7 +13,7 @@ timer_results_position = zeros(1, length(x_distances_specified));
 for index = 1:length(x_distances_specified)
     pause(5);
     x_specified = x_distances_specified(index);
-    final_simulation
+    final_simulation!
     x_distances_actual(index) = x_data_land;
     timer_results(index) = back_to_start_timer(end);
     timer_results_position(index) = back_to_start_position(end);
