@@ -4,7 +4,7 @@ clear all
 clc
 close all
 
-swing_angles = linspace(-43, -70, 28);
+swing_angles = linspace(-51, -80, 30);
 x_distances = zeros(1, length(swing_angles));
 y_heights = zeros(1, length(swing_angles));
 for index = 1:length(swing_angles)
