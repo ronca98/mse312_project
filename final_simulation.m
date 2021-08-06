@@ -23,6 +23,9 @@ end
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
+if x_specified > 1.5
+    arm_swing_angle = -80;
+end
 arm_start_angle = 204.8; 
 
 %% start positions at ball launch from origin, used for simulink, script
