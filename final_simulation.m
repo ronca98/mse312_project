@@ -15,11 +15,7 @@ gear_ratio = 4.8;
 center_distance = base_gear+follower_gear;
 
 %% use model to give launch angle for specified distance
-polynomial_coeffs = readmatrix("curve_fit_model_0.2_to_0.9.csv");
-
-if x_specified > 0.9
-    polynomial_coeffs = readmatrix("curve_fit_model_0.9_to_1.5.csv");
-end
+polynomial_coeffs = readmatrix("curve_fit_model.csv");
 
 %% specify how much to swing the arm and rest position
 arm_swing_angle = polyval(polynomial_coeffs, x_specified); %degrees (rotating clockwise, maximum start at 180 degrees) 
@@ -32,10 +28,9 @@ arm_start_angle = 204.8;
 rotation_input_height = 4.09; %(cm)
 z_distance_arm = 3.75; %cm
 z_distance_gears = z_distance_arm+1;
-x_distance_origin = -30; %cm
 
-x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle) + (x_distance_origin/100); % initial x position (of ball)(m)
-x0_rest = cg_ball*cosd(arm_start_angle) + (x_distance_origin/100) ;
+x0 = cg_ball*cosd(arm_start_angle + arm_swing_angle); % initial x position (of ball)(m)
+x0_rest = cg_ball*cosd(arm_start_angle);
 y0 = cg_ball*sind(arm_start_angle + arm_swing_angle) ... 
           + (((rotation_input_height+1.05+center_distance)/100) + r_ball) ; % initial y position (of ball)(m)
 y0_rest = cg_ball*sind(arm_start_angle) ... 
