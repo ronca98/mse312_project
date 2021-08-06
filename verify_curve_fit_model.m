@@ -3,14 +3,14 @@ clear all
 close all
 clc
 
-% for testing all 131 pts
-% x_distances_specified = linspace(0.2, 1.5, 131);
-
 % 3 distances for demo 
 x_distances_specified = [0.24, 0.61, 1.30];
 
 % max distance and height
 % x_distances_specified = [1.89, 1.41];
+
+% for testing all 131 pts
+% x_distances_specified = linspace(0.2, 1.5, 131);
 
 x_distances_actual = zeros(1, length(x_distances_specified));
 timer_results = zeros(1, length(x_distances_specified));
